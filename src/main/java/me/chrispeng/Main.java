@@ -29,5 +29,6 @@ public class Main {
             Arrays.asList(h1, h2)
         );
         DomPrinter.prettyPrint(root, 0);
+
     }
 }

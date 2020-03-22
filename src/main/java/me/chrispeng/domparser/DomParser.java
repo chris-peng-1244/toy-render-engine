@@ -1,8 +1,7 @@
-package me.chrispeng.parser;
+package me.chrispeng.domparser;
 
-import com.sun.org.apache.xml.internal.utils.DOMBuilder;
-import com.sun.xml.internal.xsom.impl.Ref;
 import lombok.AllArgsConstructor;
+import me.chrispeng.AbstractParser;
 import me.chrispeng.dom.ElementData;
 import me.chrispeng.dom.Node;
 import me.chrispeng.dom.NodeBuilders;
@@ -11,57 +10,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.regex.Pattern;
 
-public class Parser {
-    private int position;
-    private String input;
+public class DomParser extends AbstractParser {
+
     private static final Pattern TAG_PATTERN = Pattern.compile("[a-zA-Z0-9]");
 
-    private Parser(int position, String input) {
-        this.position = position;
-        this.input = input;
+    protected DomParser(int position, String input) {
+        super(position, input);
     }
 
     public static Node<ElementData> parse(String source) {
-        Parser parser = new Parser(0, source);
-        List<Node<?>> nodes = parser.parseNodes();
+        DomParser domParser = new DomParser(0, source);
+        List<Node<?>> nodes = domParser.parseNodes();
         // If the document contains a root element, return it; otherwise create one, and put all node inside it.
         if (nodes.size() == 1) {
             return (Node<ElementData>) nodes.get(0);
         }
         return NodeBuilders.element("html", new HashMap<>(), nodes);
-    }
-
-    private String nextChar() {
-        return input.substring(position, position+1);
-    }
-
-    private boolean startsWith(String s) {
-        return input.substring(position).startsWith(s);
-    }
-
-    private boolean eof() {
-        return position >= input.length();
-    }
-
-    private String consumeChar() {
-        String nextChar = nextChar();
-        position++;
-        return nextChar;
-    }
-
-    private String consumeWhile(Function<String, Boolean> test) {
-        StringBuilder sb = new StringBuilder();
-        while (!eof() && test.apply(nextChar())) {
-            sb.append(consumeChar());
-        }
-        return sb.toString();
-    }
-
-    private void consumeWhitespace() {
-        consumeWhile(s -> s.equals(" "));
     }
 
     private String parseTagName() {

@@ -1,18 +1,16 @@
-package me.chrispeng.parser;
+package me.chrispeng.domparser;
 
 import me.chrispeng.dom.ElementData;
 import me.chrispeng.dom.Node;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class ParserTest {
+class DomParserTest {
 
     @Test
     void parse() {
-        Node<ElementData> root = Parser.parse("<html><h1>Hello</h1><div id=\"title\"><p>Nice " +
+        Node<ElementData> root = DomParser.parse("<html><h1>Hello</h1><div id=\"title\"><p>Nice " +
             "Paragraph</p></div></html>");
         assertEquals("html", root.getNodeData().getTagName());
         assertEquals(2, root.getChildren().size());
